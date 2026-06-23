@@ -1,4 +1,4 @@
-import { reportSchema, updateStatusSchema, apresiasiSchema } from '../src/lib/validations';
+import { reportSchema, apresiasiSchema } from '../src/lib/validations';
 import * as assert from 'assert';
 
 console.log("=== Menjalankan Uji Coba Skema Validasi ===");
@@ -29,12 +29,13 @@ try {
       longitude: 106.8
     });
     assert.fail("Harusnya gagal karena deskripsi terlalu pendek");
-  } catch (err: any) {
-    if (err.name === 'AssertionError') {
-      throw err;
+  } catch (err) {
+    const error = err as Error & { errors?: { path: string[] }[]; issues?: { path: string[] }[] };
+    if (error.name === 'AssertionError') {
+      throw error;
     }
-    const issues = err.errors || err.issues;
-    assert.ok(issues && issues.some((e: any) => e.path.includes("description")));
+    const issues = error.errors || error.issues;
+    assert.ok(issues && issues.some((e) => e.path.includes("description")));
     console.log("✓ Kegagalan laporan terdeteksi dengan benar.");
   }
 
