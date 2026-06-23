@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model FasumReport {
+  id           String   @id @default(cuid())
+  userId       String
+  category     String   // 'Lampu' | 'Jalan' | 'Drainase' | 'Lainnya'
+  description  String
+  imageUrl     String
+  latitude     Float
+  longitude    Float
+  status       String   @default("PENDING") // 'PENDING' | 'VERIFIED' | 'IN_PROGRESS' | 'COMPLETED'
+  adminReply   String?
+  afterImageUrl String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  apresiasi    Apresiasi[]
+}
+
+model Apresiasi {
+  id         String      @id @default(cuid())
+  reportId   String
+  message    String
+  stickerId  String
+  createdAt  DateTime    @default(now())
+  report     FasumReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
